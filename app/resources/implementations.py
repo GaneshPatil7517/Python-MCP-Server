@@ -70,6 +70,9 @@ class ResourceProvider:
         settings = get_settings()
 
         return {
+            # top-level metrics for backward compatibility
+            "cpu_percent": system["cpu_percent"],
+            "memory_percent": system["memory_percent"],
             "status": "operational",
             "uptime_seconds": system["uptime_seconds"],
             "version": settings.api_version,

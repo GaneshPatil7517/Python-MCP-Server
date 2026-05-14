@@ -72,7 +72,8 @@ class Settings(BaseSettings):
 
     @validator("environment")
     def validate_environment(cls, v):
-        valid = {"development", "staging", "production"}
+        # Include 'testing' to support CI/test environments
+        valid = {"development", "staging", "production", "testing"}
         if v not in valid:
             raise ValueError(f"Environment must be one of {valid}")
         return v
