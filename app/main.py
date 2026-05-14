@@ -26,7 +26,6 @@ from app.utils.helpers import generate_request_id, format_success_response, form
 from app.schemas.tools import ToolResponse
 import time
 
-
 # Setup logging
 settings = get_settings()
 logger = setup_logging(
@@ -113,32 +112,37 @@ async def general_exception_handler(request: Request, exc: Exception):
 @app.get("/health", tags=["Health"])
 async def health_check():
     """Health check endpoint."""
-    return format_success_response({
-        "status": "healthy",
-        "timestamp": time.time(),
-    })
+    return format_success_response(
+        {
+            "status": "healthy",
+            "timestamp": time.time(),
+        }
+    )
 
 
 # Root endpoint
 @app.get("/", tags=["Root"])
 async def root():
     """Root endpoint with server information."""
-    return format_success_response({
-        "title": settings.api_title,
-        "version": settings.api_version,
-        "description": settings.api_description,
-        "documentation": "/docs",
-        "openapi": "/openapi.json",
-    })
+    return format_success_response(
+        {
+            "title": settings.api_title,
+            "version": settings.api_version,
+            "description": settings.api_description,
+            "documentation": "/docs",
+            "openapi": "/openapi.json",
+        }
+    )
 
 
 # ==================== TOOLS ENDPOINTS ====================
+
 
 @app.get("/api/tools", tags=["Tools"])
 async def list_tools():
     """List all available MCP tools."""
     logger.info("Listing available tools")
-    
+
     tools = [
         {
             "name": tool_info["name"],
@@ -147,11 +151,13 @@ async def list_tools():
         }
         for tool_info in TOOLS_REGISTRY.values()
     ]
-    
-    return format_success_response({
-        "total": len(tools),
-        "tools": tools,
-    })
+
+    return format_success_response(
+        {
+            "total": len(tools),
+            "tools": tools,
+        }
+    )
 
 
 @app.post("/api/tools/execute", tags=["Tools"], response_model=ToolResponse)
@@ -161,44 +167,46 @@ async def execute_tool(request: Request):
         body = await request.json()
         tool_name = body.get("tool")
         tool_input = body.get("input", {})
-        
+
         logger.info(f"Executing tool: {tool_name}")
-        
+
         if tool_name not in TOOLS_REGISTRY:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Tool '{tool_name}' not found",
             )
-        
+
         tool_info = TOOLS_REGISTRY[tool_name]
         handler = tool_info["handler"]
-        
+
         start_time = time.time()
-        
+
         # Execute tool based on type
         if tool_name == "system_status":
             result = await handler.execute()
         elif tool_name in ["get_weather", "summarize_text"]:
             from app.schemas.tools import GetWeatherInput, SummarizeTextInput
+
             input_schema = GetWeatherInput if tool_name == "get_weather" else SummarizeTextInput
             validated_input = input_schema(**tool_input)
             result = await handler.execute(validated_input)
         elif tool_name == "github_user_lookup":
             from app.schemas.tools import GitHubUserLookupInput
+
             validated_input = GitHubUserLookupInput(**tool_input)
             result = await handler.execute(validated_input)
-        
+
         execution_time = (time.time() - start_time) * 1000
-        
+
         logger.info(f"Tool executed successfully: {tool_name} ({execution_time:.2f}ms)")
-        
+
         return ToolResponse(
             tool_name=tool_name,
             success=result.success,
             result=result.dict(),
             execution_time_ms=execution_time,
         )
-    
+
     except Exception as e:
         logger.error(f"Tool execution failed: {str(e)}")
         raise HTTPException(
@@ -209,11 +217,12 @@ async def execute_tool(request: Request):
 
 # ==================== RESOURCES ENDPOINTS ====================
 
+
 @app.get("/api/resources", tags=["Resources"])
 async def list_resources():
     """List all available MCP resources."""
     logger.info("Listing available resources")
-    
+
     resources = [
         {
             "uri": resource_info["uri"],
@@ -223,27 +232,29 @@ async def list_resources():
         }
         for resource_info in RESOURCES_REGISTRY.values()
     ]
-    
-    return format_success_response({
-        "total": len(resources),
-        "resources": resources,
-    })
+
+    return format_success_response(
+        {
+            "total": len(resources),
+            "resources": resources,
+        }
+    )
 
 
 @app.get("/api/resources/{resource_name}", tags=["Resources"])
 async def get_resource(resource_name: str):
     """Get a specific MCP resource."""
     logger.info(f"Fetching resource: {resource_name}")
-    
+
     if resource_name not in RESOURCES_REGISTRY:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Resource '{resource_name}' not found",
         )
-    
+
     resource_info = RESOURCES_REGISTRY[resource_name]
     provider_method = resource_info["provider"]
-    
+
     # Get resource data from provider
     if provider_method == "api_documentation":
         data = ResourceProvider.get_api_documentation()
@@ -260,21 +271,24 @@ async def get_resource(resource_name: str):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Unknown resource provider",
         )
-    
-    return format_success_response({
-        "resource_uri": resource_info["uri"],
-        "resource_name": resource_name,
-        "data": data,
-    })
+
+    return format_success_response(
+        {
+            "resource_uri": resource_info["uri"],
+            "resource_name": resource_name,
+            "data": data,
+        }
+    )
 
 
 # ==================== PROMPTS ENDPOINTS ====================
+
 
 @app.get("/api/prompts", tags=["Prompts"])
 async def list_prompts():
     """List all available MCP prompts."""
     logger.info("Listing available prompts")
-    
+
     prompts = [
         {
             "name": prompt_info["name"],
@@ -282,27 +296,29 @@ async def list_prompts():
         }
         for prompt_info in PROMPTS_REGISTRY.values()
     ]
-    
-    return format_success_response({
-        "total": len(prompts),
-        "prompts": prompts,
-    })
+
+    return format_success_response(
+        {
+            "total": len(prompts),
+            "prompts": prompts,
+        }
+    )
 
 
 @app.get("/api/prompts/{prompt_name}", tags=["Prompts"])
 async def get_prompt(prompt_name: str):
     """Get a specific MCP prompt."""
     logger.info(f"Fetching prompt: {prompt_name}")
-    
+
     if prompt_name not in PROMPTS_REGISTRY:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Prompt '{prompt_name}' not found",
         )
-    
+
     prompt_info = PROMPTS_REGISTRY[prompt_name]
     provider_method = prompt_info["provider"]
-    
+
     # Get prompt data from provider
     if provider_method == "debugging_assistant":
         data = PromptProvider.get_debugging_assistant_prompt()
@@ -317,14 +333,17 @@ async def get_prompt(prompt_name: str):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Unknown prompt provider",
         )
-    
-    return format_success_response({
-        "prompt_name": prompt_name,
-        "data": data,
-    })
+
+    return format_success_response(
+        {
+            "prompt_name": prompt_name,
+            "data": data,
+        }
+    )
 
 
 # ==================== STATUS ENDPOINTS ====================
+
 
 @app.get("/api/status", tags=["Status"])
 async def server_status():
@@ -335,6 +354,7 @@ async def server_status():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(
         app,
         host=settings.host,

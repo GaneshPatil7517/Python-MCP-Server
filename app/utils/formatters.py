@@ -17,7 +17,7 @@ def truncate_string(text: str, max_length: int = 100, suffix: str = "...") -> st
     """Truncate string to max length."""
     if len(text) <= max_length:
         return text
-    return text[:max_length - len(suffix)] + suffix
+    return text[: max_length - len(suffix)] + suffix
 
 
 def format_bytes(bytes_value: float) -> str:
@@ -39,4 +39,4 @@ def parse_pagination_params(skip: int = 0, limit: int = 10) -> Dict[str, int]:
 def chunks(items: list, size: int):
     """Split list into chunks."""
     for i in range(0, len(items), size):
-        yield items[i:i + size]
+        yield items[i : i + size]

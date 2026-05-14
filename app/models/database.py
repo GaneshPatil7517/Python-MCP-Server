@@ -8,15 +8,14 @@ from sqlalchemy import Column, String, Integer, Float, DateTime, Boolean, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.sqlite import JSON
 
-
 Base = declarative_base()
 
 
 class APIRequest(Base):
     """Model for API request logging."""
-    
+
     __tablename__ = "api_requests"
-    
+
     id = Column(String(36), primary_key=True)
     timestamp = Column(DateTime, default=datetime.utcnow, index=True)
     method = Column(String(10))
@@ -33,9 +32,9 @@ class APIRequest(Base):
 
 class APIKey(Base):
     """Model for API keys."""
-    
+
     __tablename__ = "api_keys"
-    
+
     id = Column(String(36), primary_key=True)
     name = Column(String(255))
     key = Column(String(255), unique=True, index=True)
@@ -49,9 +48,9 @@ class APIKey(Base):
 
 class ToolExecution(Base):
     """Model for tool execution logging."""
-    
+
     __tablename__ = "tool_executions"
-    
+
     id = Column(String(36), primary_key=True)
     tool_name = Column(String(255), index=True)
     status = Column(String(20))
@@ -65,9 +64,9 @@ class ToolExecution(Base):
 
 class CacheEntry(Base):
     """Model for cache entries."""
-    
+
     __tablename__ = "cache_entries"
-    
+
     id = Column(String(255), primary_key=True)
     key = Column(String(512), unique=True, index=True)
     value = Column(JSON)
@@ -78,9 +77,9 @@ class CacheEntry(Base):
 
 class AuditLog(Base):
     """Model for audit logging."""
-    
+
     __tablename__ = "audit_logs"
-    
+
     id = Column(String(36), primary_key=True)
     action = Column(String(255))
     resource_type = Column(String(100))

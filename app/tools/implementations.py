@@ -6,38 +6,42 @@ All four tools: get_weather, github_user_lookup, summarize_text, system_status.
 import logging
 from typing import Dict, Any
 from app.schemas.tools import (
-    GetWeatherInput, GetWeatherOutput, WeatherData,
-    GitHubUserLookupInput, GitHubUserLookupOutput,
-    SummarizeTextInput, SummarizeTextOutput,
-    SystemStatusOutput, SystemStatus,
+    GetWeatherInput,
+    GetWeatherOutput,
+    WeatherData,
+    GitHubUserLookupInput,
+    GitHubUserLookupOutput,
+    SummarizeTextInput,
+    SummarizeTextOutput,
+    SystemStatusOutput,
+    SystemStatus,
 )
 from app.services.external_apis import WeatherService, GitHubService, OpenAIService
 from app.utils.helpers import get_system_status, measure_execution_time
 from app.core.exceptions import ValidationError
-
 
 logger = logging.getLogger("app")
 
 
 class WeatherTool:
     """Get weather tool implementation."""
-    
+
     def __init__(self):
         self.service = WeatherService()
-    
+
     @measure_execution_time
     async def execute(self, input_data: GetWeatherInput) -> GetWeatherOutput:
         """Execute get_weather tool."""
         try:
             logger.info(f"Fetching weather for {input_data.city}")
-            
+
             weather_data = await self.service.get_weather(
                 city=input_data.city,
                 unit=input_data.unit,
             )
-            
+
             data = WeatherData(**weather_data)
-            
+
             return GetWeatherOutput(
                 success=True,
                 data=data,
@@ -52,24 +56,25 @@ class WeatherTool:
 
 class GitHubUserLookupTool:
     """GitHub user lookup tool implementation."""
-    
+
     def __init__(self):
         self.service = GitHubService()
-    
+
     @measure_execution_time
     async def execute(self, input_data: GitHubUserLookupInput) -> GitHubUserLookupOutput:
         """Execute github_user_lookup tool."""
         try:
             logger.info(f"Fetching GitHub user: {input_data.username}")
-            
+
             user_data = await self.service.get_user(
                 username=input_data.username,
                 include_repos=input_data.include_repos,
             )
-            
+
             from app.schemas.tools import GitHubUserData
+
             data = GitHubUserData(**user_data)
-            
+
             return GitHubUserLookupOutput(
                 success=True,
                 data=data,
@@ -84,21 +89,21 @@ class GitHubUserLookupTool:
 
 class SummarizeTextTool:
     """Summarize text tool implementation."""
-    
+
     def __init__(self):
         self.service = OpenAIService()
-    
+
     @measure_execution_time
     async def execute(self, input_data: SummarizeTextInput) -> SummarizeTextOutput:
         """Execute summarize_text tool."""
         try:
             logger.info(f"Summarizing text ({len(input_data.text)} characters)")
-            
+
             summary = await self.service.summarize_text(
                 text=input_data.text,
                 max_length=input_data.max_length,
             )
-            
+
             return SummarizeTextOutput(
                 success=True,
                 summary=summary,
@@ -115,16 +120,16 @@ class SummarizeTextTool:
 
 class SystemStatusTool:
     """System status tool implementation."""
-    
+
     @measure_execution_time
     async def execute(self) -> SystemStatusOutput:
         """Execute system_status tool."""
         try:
             logger.info("Fetching system status")
-            
+
             status_data = get_system_status()
             data = SystemStatus(**status_data)
-            
+
             return SystemStatusOutput(
                 success=True,
                 data=data,

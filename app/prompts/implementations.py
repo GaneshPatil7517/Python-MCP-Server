@@ -6,13 +6,12 @@ Provides predefined prompts for various AI assistant tasks.
 import logging
 from typing import Dict, Any
 
-
 logger = logging.getLogger("app")
 
 
 class PromptProvider:
     """Provides MCP prompts."""
-    
+
     @staticmethod
     def get_debugging_assistant_prompt() -> Dict[str, Any]:
         """Get debugging assistant prompt."""
@@ -50,7 +49,7 @@ When debugging:
                 },
             ],
         }
-    
+
     @staticmethod
     def get_code_review_assistant_prompt() -> Dict[str, Any]:
         """Get code review assistant prompt."""
@@ -91,7 +90,7 @@ When reviewing code:
                 },
             ],
         }
-    
+
     @staticmethod
     def get_architecture_explanation_prompt() -> Dict[str, Any]:
         """Get architecture explanation prompt."""
@@ -132,7 +131,7 @@ When explaining architecture:
                 },
             ],
         }
-    
+
     @staticmethod
     def get_api_documentation_prompt() -> Dict[str, Any]:
         """Get API documentation prompt."""

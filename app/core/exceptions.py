@@ -8,7 +8,7 @@ from typing import Any, Dict, Optional
 
 class MCPException(Exception):
     """Base exception for all MCP server errors."""
-    
+
     def __init__(
         self,
         message: str,
@@ -32,7 +32,7 @@ class MCPException(Exception):
 
 class ValidationError(MCPException):
     """Raised when validation fails."""
-    
+
     def __init__(self, message: str, details: Optional[Dict[str, Any]] = None):
         super().__init__(
             message=message,
@@ -44,7 +44,7 @@ class ValidationError(MCPException):
 
 class AuthenticationError(MCPException):
     """Raised when authentication fails."""
-    
+
     def __init__(self, message: str = "Authentication failed"):
         super().__init__(
             message=message,
@@ -55,7 +55,7 @@ class AuthenticationError(MCPException):
 
 class AuthorizationError(MCPException):
     """Raised when user lacks required permissions."""
-    
+
     def __init__(self, message: str = "Insufficient permissions"):
         super().__init__(
             message=message,
@@ -66,7 +66,7 @@ class AuthorizationError(MCPException):
 
 class NotFoundError(MCPException):
     """Raised when resource is not found."""
-    
+
     def __init__(self, resource: str, identifier: str):
         message = f"{resource} '{identifier}' not found"
         super().__init__(
@@ -79,7 +79,7 @@ class NotFoundError(MCPException):
 
 class RateLimitError(MCPException):
     """Raised when rate limit is exceeded."""
-    
+
     def __init__(self, retry_after: int):
         super().__init__(
             message="Rate limit exceeded",
@@ -91,7 +91,7 @@ class RateLimitError(MCPException):
 
 class APIError(MCPException):
     """Raised when external API call fails."""
-    
+
     def __init__(
         self,
         message: str,
@@ -109,7 +109,7 @@ class APIError(MCPException):
 
 class TimeoutError(MCPException):
     """Raised when operation times out."""
-    
+
     def __init__(self, operation: str, timeout_seconds: float):
         super().__init__(
             message=f"Operation '{operation}' timed out after {timeout_seconds}s",
@@ -121,7 +121,7 @@ class TimeoutError(MCPException):
 
 class ConfigurationError(MCPException):
     """Raised when configuration is invalid."""
-    
+
     def __init__(self, message: str, details: Optional[Dict[str, Any]] = None):
         super().__init__(
             message=message,

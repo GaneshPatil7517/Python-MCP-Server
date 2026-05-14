@@ -4,8 +4,13 @@ Unit tests for tools.
 
 import pytest
 from app.tools.implementations import (
-    WeatherTool, GitHubUserLookupTool, SummarizeTextTool, SystemStatusTool,
-    GetWeatherInput, GitHubUserLookupInput, SummarizeTextInput,
+    WeatherTool,
+    GitHubUserLookupTool,
+    SummarizeTextTool,
+    SystemStatusTool,
+    GetWeatherInput,
+    GitHubUserLookupInput,
+    SummarizeTextInput,
 )
 
 
@@ -15,7 +20,7 @@ async def test_weather_tool():
     tool = WeatherTool()
     input_data = GetWeatherInput(city="London", unit="metric")
     result = await tool.execute(input_data)
-    
+
     assert result.success is True
     assert result.data is not None
     assert result.data.city == "London"
@@ -34,7 +39,7 @@ async def test_github_lookup_tool():
     tool = GitHubUserLookupTool()
     input_data = GitHubUserLookupInput(username="torvalds", include_repos=False)
     result = await tool.execute(input_data)
-    
+
     # May fail if API key not set, but should handle gracefully
     assert result.success or result.error is not None
 
@@ -48,7 +53,7 @@ async def test_summarize_text_tool():
         max_length=50,
     )
     result = await tool.execute(input_data)
-    
+
     assert result.success is True
     assert result.summary is not None
     assert result.original_length > 0
@@ -59,7 +64,7 @@ async def test_system_status_tool():
     """Test system status tool."""
     tool = SystemStatusTool()
     result = await tool.execute()
-    
+
     assert result.success is True
     assert result.data is not None
     assert result.data.cpu_percent >= 0

@@ -37,7 +37,7 @@ def test_list_tools(client):
     assert data["success"] is True
     assert "tools" in data["data"]
     assert len(data["data"]["tools"]) > 0
-    
+
     # Check tool names
     tool_names = [tool["name"] for tool in data["data"]["tools"]]
     assert "get_weather" in tool_names

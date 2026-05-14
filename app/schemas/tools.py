@@ -9,23 +9,16 @@ from pydantic import BaseModel, Field, validator
 
 class ToolInputBase(BaseModel):
     """Base class for tool inputs."""
+
     pass
 
 
 class GetWeatherInput(ToolInputBase):
     """Schema for get_weather tool input."""
-    
-    city: str = Field(
-        ...,
-        description="City name",
-        min_length=1,
-        max_length=100
-    )
-    unit: str = Field(
-        default="metric",
-        description="Temperature unit (metric, imperial, kelvin)"
-    )
-    
+
+    city: str = Field(..., description="City name", min_length=1, max_length=100)
+    unit: str = Field(default="metric", description="Temperature unit (metric, imperial, kelvin)")
+
     @validator("unit")
     def validate_unit(cls, v):
         valid_units = {"metric", "imperial", "kelvin"}
@@ -36,7 +29,7 @@ class GetWeatherInput(ToolInputBase):
 
 class WeatherData(BaseModel):
     """Weather data response."""
-    
+
     city: str
     country: str
     temperature: float
@@ -50,7 +43,7 @@ class WeatherData(BaseModel):
 
 class GetWeatherOutput(BaseModel):
     """Schema for get_weather tool output."""
-    
+
     success: bool
     data: Optional[WeatherData] = None
     error: Optional[str] = None
@@ -58,20 +51,16 @@ class GetWeatherOutput(BaseModel):
 
 class GitHubUserLookupInput(ToolInputBase):
     """Schema for github_user_lookup tool input."""
-    
+
     username: str = Field(
-        ...,
-        description="GitHub username",
-        min_length=1,
-        max_length=39,
-        pattern=r"^[a-zA-Z0-9-]+$"
+        ..., description="GitHub username", min_length=1, max_length=39, pattern=r"^[a-zA-Z0-9-]+$"
     )
     include_repos: bool = Field(default=True, description="Include repositories")
 
 
 class Repository(BaseModel):
     """GitHub repository information."""
-    
+
     name: str
     url: str
     description: Optional[str] = None
@@ -82,7 +71,7 @@ class Repository(BaseModel):
 
 class GitHubUserData(BaseModel):
     """GitHub user profile data."""
-    
+
     username: str
     name: Optional[str] = None
     bio: Optional[str] = None
@@ -96,7 +85,7 @@ class GitHubUserData(BaseModel):
 
 class GitHubUserLookupOutput(BaseModel):
     """Schema for github_user_lookup tool output."""
-    
+
     success: bool
     data: Optional[GitHubUserData] = None
     error: Optional[str] = None
@@ -104,25 +93,15 @@ class GitHubUserLookupOutput(BaseModel):
 
 class SummarizeTextInput(ToolInputBase):
     """Schema for summarize_text tool input."""
-    
-    text: str = Field(
-        ...,
-        description="Text to summarize",
-        min_length=10,
-        max_length=10000
-    )
-    max_length: int = Field(
-        default=100,
-        description="Maximum length of summary",
-        ge=10,
-        le=500
-    )
+
+    text: str = Field(..., description="Text to summarize", min_length=10, max_length=10000)
+    max_length: int = Field(default=100, description="Maximum length of summary", ge=10, le=500)
     language: str = Field(default="en", description="Language code")
 
 
 class SummarizeTextOutput(BaseModel):
     """Schema for summarize_text tool output."""
-    
+
     success: bool
     summary: Optional[str] = None
     original_length: Optional[int] = None
@@ -132,7 +111,7 @@ class SummarizeTextOutput(BaseModel):
 
 class SystemStatus(BaseModel):
     """System status information."""
-    
+
     cpu_percent: float
     memory_percent: float
     memory_available_gb: float
@@ -142,7 +121,7 @@ class SystemStatus(BaseModel):
 
 class SystemStatusOutput(BaseModel):
     """Schema for system_status tool output."""
-    
+
     success: bool
     data: Optional[SystemStatus] = None
     error: Optional[str] = None
@@ -150,7 +129,7 @@ class SystemStatusOutput(BaseModel):
 
 class ToolDefinition(BaseModel):
     """MCP Tool definition."""
-    
+
     name: str
     description: str
     input_schema: Dict[str, Any]
@@ -158,7 +137,7 @@ class ToolDefinition(BaseModel):
 
 class ToolResponse(BaseModel):
     """Generic tool response."""
-    
+
     tool_name: str
     success: bool
     result: Optional[Dict[str, Any]] = None

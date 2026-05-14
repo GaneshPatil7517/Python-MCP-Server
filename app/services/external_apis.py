@@ -10,27 +10,26 @@ from datetime import datetime, timedelta
 from app.config.settings import get_settings
 from app.core.exceptions import APIError, TimeoutError
 
-
 logger = logging.getLogger("app")
 
 
 class HTTPClientService:
     """Service for making HTTP requests with built-in error handling and retries."""
-    
+
     def __init__(self):
         self.settings = get_settings()
         self._client: Optional[httpx.AsyncClient] = None
         self._retry_count = 3
         self._retry_delay = 1
-    
+
     async def __aenter__(self):
         self._client = httpx.AsyncClient(timeout=self.settings.http_timeout)
         return self
-    
+
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         if self._client:
             await self._client.aclose()
-    
+
     async def get(
         self,
         url: str,
@@ -40,23 +39,25 @@ class HTTPClientService:
     ) -> Dict[str, Any]:
         """
         Make async GET request with retries.
-        
+
         Args:
             url: URL to request
             headers: Request headers
             params: Query parameters
             api_name: Name of API for logging
-        
+
         Returns:
             Response JSON as dictionary
-        
+
         Raises:
             APIError: If request fails
             TimeoutError: If request times out
         """
         if not self._client:
-            raise RuntimeError("HTTPClientService not initialized. Use 'async with' context manager.")
-        
+            raise RuntimeError(
+                "HTTPClientService not initialized. Use 'async with' context manager."
+            )
+
         for attempt in range(self._retry_count):
             try:
                 response = await self._client.get(
@@ -65,7 +66,7 @@ class HTTPClientService:
                     params=params,
                     timeout=self.settings.http_timeout,
                 )
-                
+
                 if response.status_code >= 400:
                     logger.error(
                         f"API request failed: {api_name}",
@@ -82,10 +83,10 @@ class HTTPClientService:
                         api_name=api_name,
                         status_code=response.status_code,
                     )
-                
+
                 logger.info(f"API request succeeded: {api_name}")
                 return response.json()
-            
+
             except httpx.TimeoutException as e:
                 logger.error(f"API request timeout: {api_name} (attempt {attempt + 1})")
                 if attempt == self._retry_count - 1:
@@ -93,27 +94,28 @@ class HTTPClientService:
                         operation=f"API request to {api_name}",
                         timeout_seconds=self.settings.http_timeout,
                     )
-            
+
             except httpx.RequestError as e:
                 logger.error(
                     f"API request error: {api_name} (attempt {attempt + 1})",
-                    extra={"extra_data": {"error": str(e)}}
+                    extra={"extra_data": {"error": str(e)}},
                 )
                 if attempt == self._retry_count - 1:
                     raise APIError(
                         message=f"API request failed: {str(e)}",
                         api_name=api_name,
                     )
-            
+
             except Exception as e:
                 if attempt == self._retry_count - 1:
                     raise
                 logger.warning(f"Retrying API request for {api_name}")
-            
+
             if attempt < self._retry_count - 1:
                 import asyncio
+
                 await asyncio.sleep(self._retry_delay * (attempt + 1))
-    
+
     async def post(
         self,
         url: str,
@@ -123,8 +125,10 @@ class HTTPClientService:
     ) -> Dict[str, Any]:
         """Make async POST request."""
         if not self._client:
-            raise RuntimeError("HTTPClientService not initialized. Use 'async with' context manager.")
-        
+            raise RuntimeError(
+                "HTTPClientService not initialized. Use 'async with' context manager."
+            )
+
         try:
             response = await self._client.post(
                 url,
@@ -132,16 +136,16 @@ class HTTPClientService:
                 headers=headers,
                 timeout=self.settings.http_timeout,
             )
-            
+
             if response.status_code >= 400:
                 raise APIError(
                     message=f"API request failed with status {response.status_code}",
                     api_name=api_name,
                     status_code=response.status_code,
                 )
-            
+
             return response.json()
-        
+
         except httpx.TimeoutException:
             raise TimeoutError(
                 operation=f"API request to {api_name}",
@@ -153,26 +157,26 @@ class HTTPClientService:
 
 class WeatherService:
     """Service for weather operations."""
-    
+
     def __init__(self):
         self.settings = get_settings()
         self.api_base = "https://api.openweathermap.org/data/2.5/weather"
-    
+
     async def get_weather(self, city: str, unit: str = "metric") -> Dict[str, Any]:
         """
         Fetch weather for a city.
-        
+
         Args:
             city: City name
             unit: Temperature unit (metric, imperial, kelvin)
-        
+
         Returns:
             Weather data dictionary
         """
         if not self.settings.weather_api_key:
             logger.warning("Weather API key not configured")
             return self._get_fallback_weather(city)
-        
+
         async with HTTPClientService() as http_client:
             try:
                 data = await http_client.get(
@@ -184,7 +188,7 @@ class WeatherService:
                     },
                     api_name="openweathermap",
                 )
-                
+
                 return {
                     "city": data["name"],
                     "country": data["sys"]["country"],
@@ -199,7 +203,7 @@ class WeatherService:
             except Exception as e:
                 logger.error(f"Weather service error: {str(e)}")
                 return self._get_fallback_weather(city)
-    
+
     def _get_fallback_weather(self, city: str) -> Dict[str, Any]:
         """Get fallback weather data."""
         return {
@@ -217,26 +221,26 @@ class WeatherService:
 
 class GitHubService:
     """Service for GitHub operations."""
-    
+
     def __init__(self):
         self.settings = get_settings()
         self.api_base = "https://api.github.com"
-    
+
     async def get_user(self, username: str, include_repos: bool = True) -> Dict[str, Any]:
         """
         Fetch GitHub user information.
-        
+
         Args:
             username: GitHub username
             include_repos: Whether to include repositories
-        
+
         Returns:
             User data dictionary
         """
         headers = {}
         if self.settings.github_token:
             headers["Authorization"] = f"token {self.settings.github_token}"
-        
+
         async with HTTPClientService() as http_client:
             # Fetch user data
             user_data = await http_client.get(
@@ -244,7 +248,7 @@ class GitHubService:
                 headers=headers,
                 api_name="github",
             )
-            
+
             result = {
                 "username": user_data["login"],
                 "name": user_data.get("name"),
@@ -255,7 +259,7 @@ class GitHubService:
                 "public_repos": user_data["public_repos"],
                 "avatar_url": user_data["avatar_url"],
             }
-            
+
             if include_repos:
                 try:
                     repos_data = await http_client.get(
@@ -264,7 +268,7 @@ class GitHubService:
                         headers=headers,
                         api_name="github",
                     )
-                    
+
                     result["repositories"] = [
                         {
                             "name": repo["name"],
@@ -278,34 +282,34 @@ class GitHubService:
                     ]
                 except Exception as e:
                     logger.warning(f"Failed to fetch repositories: {str(e)}")
-            
+
             return result
 
 
 class OpenAIService:
     """Service for OpenAI operations."""
-    
+
     def __init__(self):
         self.settings = get_settings()
         self.api_base = "https://api.openai.com/v1"
-    
+
     async def summarize_text(self, text: str, max_length: int = 100) -> Optional[str]:
         """
         Summarize text using OpenAI API.
-        
+
         Args:
             text: Text to summarize
             max_length: Maximum length of summary
-        
+
         Returns:
             Summary text or None if API key not configured
         """
         if not self.settings.openai_api_key:
             logger.warning("OpenAI API key not configured, using fallback")
             return self._local_summarize(text, max_length)
-        
+
         headers = {"Authorization": f"Bearer {self.settings.openai_api_key}"}
-        
+
         async with HTTPClientService() as http_client:
             try:
                 response = await http_client.post(
@@ -328,21 +332,21 @@ class OpenAIService:
                     },
                     api_name="openai",
                 )
-                
+
                 return response["choices"][0]["message"]["content"]
             except Exception as e:
                 logger.error(f"OpenAI summarization failed: {str(e)}")
                 return self._local_summarize(text, max_length)
-    
+
     def _local_summarize(self, text: str, max_length: int) -> str:
         """Local text summarization using simple heuristics."""
         sentences = text.replace(".", ".\n").split("\n")
         summary = ""
-        
+
         for sentence in sentences:
             if len(summary) + len(sentence) <= max_length:
                 summary += sentence.strip() + " "
             else:
                 break
-        
+
         return summary.strip() or text[:max_length]

@@ -9,7 +9,7 @@ from datetime import datetime
 
 class ResourceMetadata(BaseModel):
     """Metadata for a resource."""
-    
+
     name: str
     description: str
     created_at: datetime
@@ -20,7 +20,7 @@ class ResourceMetadata(BaseModel):
 
 class APIDocumentationResource(BaseModel):
     """API documentation resource."""
-    
+
     title: str
     description: str
     endpoints: List[Dict[str, Any]]
@@ -30,7 +30,7 @@ class APIDocumentationResource(BaseModel):
 
 class ServerStatusResource(BaseModel):
     """Server status resource."""
-    
+
     status: str
     uptime_seconds: float
     version: str
@@ -40,7 +40,7 @@ class ServerStatusResource(BaseModel):
 
 class ProjectInformationResource(BaseModel):
     """Project information resource."""
-    
+
     name: str
     description: str
     version: str
@@ -51,7 +51,7 @@ class ProjectInformationResource(BaseModel):
 
 class UsageGuideResource(BaseModel):
     """Usage guide resource."""
-    
+
     title: str
     sections: List[Dict[str, str]]
     examples: List[str]
@@ -59,14 +59,14 @@ class UsageGuideResource(BaseModel):
 
 class ToolListResource(BaseModel):
     """Available tools list resource."""
-    
+
     total: int
     tools: List[Dict[str, Any]]
 
 
 class ResourceDefinition(BaseModel):
     """MCP Resource definition."""
-    
+
     uri: str
     name: str
     description: str
@@ -75,7 +75,7 @@ class ResourceDefinition(BaseModel):
 
 class ResourceResponse(BaseModel):
     """Generic resource response."""
-    
+
     resource_uri: str
     success: bool
     data: Optional[Dict[str, Any]] = None

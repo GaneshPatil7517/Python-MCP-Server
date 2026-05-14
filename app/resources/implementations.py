@@ -9,13 +9,12 @@ from datetime import datetime
 from app.utils.helpers import get_system_status
 from app.config.settings import get_settings
 
-
 logger = logging.getLogger("app")
 
 
 class ResourceProvider:
     """Provides MCP resources."""
-    
+
     @staticmethod
     def get_api_documentation() -> Dict[str, Any]:
         """Get API documentation resource."""
@@ -63,13 +62,13 @@ class ResourceProvider:
             "base_url": "http://localhost:8000",
             "authentication": "API Key (X-API-Key header) or Bearer Token",
         }
-    
+
     @staticmethod
     def get_server_status() -> Dict[str, Any]:
         """Get server status resource."""
         system = get_system_status()
         settings = get_settings()
-        
+
         return {
             "status": "operational",
             "uptime_seconds": system["uptime_seconds"],
@@ -82,7 +81,7 @@ class ResourceProvider:
                 "memory_available_gb": system["memory_available_gb"],
             },
         }
-    
+
     @staticmethod
     def get_project_information() -> Dict[str, Any]:
         """Get project information resource."""
@@ -105,7 +104,7 @@ class ResourceProvider:
                 "PostgreSQL database support",
             ],
         }
-    
+
     @staticmethod
     def get_usage_guide() -> Dict[str, Any]:
         """Get usage guide resource."""
@@ -135,20 +134,22 @@ class ResourceProvider:
                 },
             ],
         }
-    
+
     @staticmethod
     def get_tools_list() -> Dict[str, Any]:
         """Get list of available tools resource."""
         from app.tools.implementations import TOOLS_REGISTRY
-        
+
         tools = []
         for tool_name, tool_info in TOOLS_REGISTRY.items():
-            tools.append({
-                "name": tool_info["name"],
-                "description": tool_info["description"],
-                "input_schema": tool_info["input_schema"],
-            })
-        
+            tools.append(
+                {
+                    "name": tool_info["name"],
+                    "description": tool_info["description"],
+                    "input_schema": tool_info["input_schema"],
+                }
+            )
+
         return {
             "total": len(tools),
             "tools": tools,

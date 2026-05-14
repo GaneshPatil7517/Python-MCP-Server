@@ -13,7 +13,7 @@ from pathlib import Path
 
 class JSONFormatter(logging.Formatter):
     """Custom JSON formatter for structured logging."""
-    
+
     def format(self, record: logging.LogRecord) -> str:
         log_data: Dict[str, Any] = {
             "timestamp": datetime.utcnow().isoformat(),
@@ -24,19 +24,19 @@ class JSONFormatter(logging.Formatter):
             "function": record.funcName,
             "line": record.lineno,
         }
-        
+
         if record.exc_info:
             log_data["exception"] = self.formatException(record.exc_info)
-        
+
         if hasattr(record, "request_id"):
             log_data["request_id"] = record.request_id
-        
+
         if hasattr(record, "user_id"):
             log_data["user_id"] = record.user_id
-        
+
         if hasattr(record, "extra_data"):
             log_data["extra"] = record.extra_data
-        
+
         return json.dumps(log_data, default=str)
 
 
@@ -47,16 +47,16 @@ def setup_logging(
 ) -> logging.Logger:
     """
     Configure logging for the application.
-    
+
     Args:
         log_level: Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
         log_file: Optional file path for log output
         json_format: Whether to use JSON formatting
-    
+
     Returns:
         Configured logger instance
     """
-    
+
     handlers: Dict[str, Any] = {
         "console": {
             "class": "logging.StreamHandler",
@@ -65,7 +65,7 @@ def setup_logging(
             "stream": "ext://sys.stdout",
         }
     }
-    
+
     if log_file:
         Path(log_file).parent.mkdir(parents=True, exist_ok=True)
         handlers["file"] = {
@@ -76,14 +76,12 @@ def setup_logging(
             "maxBytes": 10485760,
             "backupCount": 5,
         }
-    
+
     config = {
         "version": 1,
         "disable_existing_loggers": False,
         "formatters": {
-            "standard": {
-                "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-            },
+            "standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"},
             "json": {
                 "()": JSONFormatter,
             },
@@ -99,22 +97,22 @@ def setup_logging(
             "uvicorn.access": {"level": "INFO", "propagate": False},
         },
     }
-    
+
     logging.config.dictConfig(config)
     return logging.getLogger("app")
 
 
 class LogContext:
     """Context manager for adding context to logs."""
-    
+
     def __init__(self, **context: Any):
         self.context = context
         self.logger = logging.getLogger("app")
-    
+
     def __enter__(self):
         for key, value in self.context.items():
             logging.currentframe().f_locals[key] = value
         return self
-    
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass

@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 class PromptArgument(BaseModel):
     """Argument for a prompt."""
-    
+
     name: str
     description: str
     required: bool = True
@@ -16,7 +16,7 @@ class PromptArgument(BaseModel):
 
 class PromptDefinition(BaseModel):
     """MCP Prompt definition."""
-    
+
     name: str
     description: str
     arguments: List[PromptArgument]
@@ -24,7 +24,7 @@ class PromptDefinition(BaseModel):
 
 class DebuggingAssistantPrompt(BaseModel):
     """Debugging assistant prompt."""
-    
+
     system_prompt: str
     user_context: Optional[str] = None
     error_message: Optional[str] = None
@@ -34,7 +34,7 @@ class DebuggingAssistantPrompt(BaseModel):
 
 class CodeReviewAssistantPrompt(BaseModel):
     """Code review assistant prompt."""
-    
+
     system_prompt: str
     code: str
     language: str
@@ -44,7 +44,7 @@ class CodeReviewAssistantPrompt(BaseModel):
 
 class ArchitectureExplanationPrompt(BaseModel):
     """Architecture explanation prompt."""
-    
+
     system_prompt: str
     component: str
     depth_level: str = "intermediate"
@@ -53,7 +53,7 @@ class ArchitectureExplanationPrompt(BaseModel):
 
 class APIDocumentationPrompt(BaseModel):
     """API documentation assistant prompt."""
-    
+
     system_prompt: str
     endpoint: str
     method: str
@@ -63,7 +63,7 @@ class APIDocumentationPrompt(BaseModel):
 
 class PromptResponse(BaseModel):
     """Generic prompt response."""
-    
+
     prompt_name: str
     success: bool
     content: Optional[str] = None

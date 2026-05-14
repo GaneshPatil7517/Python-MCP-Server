@@ -5,8 +5,11 @@ Unit tests for schemas.
 import pytest
 from pydantic import ValidationError
 from app.schemas.tools import (
-    GetWeatherInput, GitHubUserLookupInput, SummarizeTextInput,
-    SystemStatusOutput, WeatherData,
+    GetWeatherInput,
+    GitHubUserLookupInput,
+    SummarizeTextInput,
+    SystemStatusOutput,
+    WeatherData,
 )
 
 
@@ -70,7 +73,7 @@ def test_weather_data_schema():
         wind_speed=5.0,
         cloudiness=50,
     )
-    
+
     assert data.city == "London"
     assert data.temperature == 15.0
     assert data.humidity == 65
