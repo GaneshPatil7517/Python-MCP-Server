@@ -2,37 +2,37 @@
 
 A production-ready, scalable **Model Context Protocol (MCP) server** built with **FastAPI** and **Python 3.12+**. Deploy on Claude Desktop, Cursor, VS Code, and other MCP-compatible clients.
 
----
 
-## 🎯 Features
+
+## Features
 
 ### MCP Components
-- ✅ **MCP Tools** - Weather lookup, GitHub user search, text summarization, system status
-- ✅ **MCP Resources** - API documentation, server status, project info, usage guides
-- ✅ **MCP Prompts** - Debugging assistant, code review, architecture explanation, API docs
+- **MCP Tools** - Weather lookup, GitHub user search, text summarization, system status
+- **MCP Resources** - API documentation, server status, project info, usage guides
+- **MCP Prompts** - Debugging assistant, code review, architecture explanation, API docs
 
 ### Core Features
-- ✅ **Async Execution** - Non-blocking async/await throughout
-- ✅ **Structured Logging** - JSON logging with request tracking
-- ✅ **Error Handling** - Centralized exception handling with custom error codes
-- ✅ **Authentication** - API Key and Bearer token authentication
-- ✅ **Rate Limiting** - Configurable rate limiting per minute/hour
-- ✅ **Caching** - In-memory and Redis-based caching
-- ✅ **Validation** - Pydantic schemas for all inputs/outputs
-- ✅ **Security** - CORS, security headers, input sanitization
+- **Async Execution** - Non-blocking async/await throughout
+- **Structured Logging** - JSON logging with request tracking
+- **Error Handling** - Centralized exception handling with custom error codes
+- **Authentication** - API Key and Bearer token authentication
+- **Rate Limiting** - Configurable rate limiting per minute/hour
+- **Caching** - In-memory and Redis-based caching
+- **Validation** - Pydantic schemas for all inputs/outputs
+- **Security** - CORS, security headers, input sanitization
 
 ### DevOps & Deployment
-- ✅ **Docker** - Multi-stage Dockerfile with optimization
-- ✅ **Docker Compose** - PostgreSQL, Redis, and MCP server
-- ✅ **CI/CD** - GitHub Actions workflow
-- ✅ **Testing** - Unit and integration tests with pytest
-- ✅ **Health Checks** - Built-in health monitoring
+- **Docker** - Multi-stage Dockerfile with optimization
+- **Docker Compose** - PostgreSQL, Redis, and MCP server
+- **CI/CD** - GitHub Actions workflow
+- **Testing** - Unit and integration tests with pytest
+- **Health Checks** - Built-in health monitoring
 
----
 
-## 📋 Project Structure
 
-```
+## Project Structure
+
+
 python-mcp-server/
 ├── app/
 │   ├── core/                 # Core utilities
@@ -84,9 +84,8 @@ python-mcp-server/
 └── README.md
 ```
 
----
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.12+
@@ -124,9 +123,9 @@ python-mcp-server/
    - ReDoc: http://localhost:8000/redoc
    - OpenAPI: http://localhost:8000/openapi.json
 
----
 
-## 🐳 Docker Deployment
+
+## Docker Deployment
 
 ### With Docker Compose (Recommended)
 
@@ -165,7 +164,7 @@ docker logs -f mcp-server
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -204,7 +203,7 @@ LOG_JSON=True
 
 ---
 
-## 🛠️ MCP Tools
+## MCP Tools
 
 ### 1. Get Weather
 
@@ -306,9 +305,8 @@ Get real-time system metrics.
 }
 ```
 
----
 
-## 📚 MCP Resources
+## MCP Resources
 
 Access read-only resources:
 
@@ -324,9 +322,9 @@ curl http://localhost:8000/api/resources/usage_guide
 curl http://localhost:8000/api/resources/tools_list
 ```
 
----
 
-## 💭 MCP Prompts
+
+## MCP Prompts
 
 Use predefined system prompts for AI assistants:
 
@@ -341,9 +339,8 @@ curl http://localhost:8000/api/prompts/architecture-explanation
 curl http://localhost:8000/api/prompts/api-documentation
 ```
 
----
 
-## 🔐 Authentication
+## Authentication
 
 ### API Key (Recommended)
 
@@ -361,9 +358,9 @@ curl -H "Authorization: Bearer your-token" http://localhost:8000/api/tools
 
 Set `ENABLE_AUTH=False` in `.env` (development only).
 
----
 
-## 🧪 Testing
+
+## Testing
 
 Run all tests:
 ```bash
@@ -382,9 +379,7 @@ pytest tests/ --cov=app --cov-report=html
 open htmlcov/index.html
 ```
 
----
-
-## 📊 Error Handling
+## Error Handling
 
 All errors follow consistent format:
 
@@ -409,9 +404,8 @@ All errors follow consistent format:
 - `TIMEOUT` (504) - Operation timed out
 - `INTERNAL_ERROR` (500) - Server error
 
----
 
-## 📈 Performance & Caching
+## Performance & Caching
 
 ### Enable Caching
 
@@ -433,9 +427,8 @@ Health check:
 curl http://localhost:8000/health
 ```
 
----
 
-## 🌐 Claude Desktop Integration
+## Claude Desktop Integration
 
 ### macOS Setup
 
@@ -469,7 +462,7 @@ Edit `%APPDATA%\Claude\claude_desktop_config.json` (same config as macOS).
 
 ---
 
-## 🔗 Cursor Integration
+## Cursor Integration
 
 1. Open Cursor settings
 2. Go to Features → MCP
@@ -484,9 +477,7 @@ Edit `%APPDATA%\Claude\claude_desktop_config.json` (same config as macOS).
 }
 ```
 
----
-
-## 🚀 Deployment
+## Deployment
 
 ### Railway
 
@@ -631,9 +622,8 @@ tail -f logs/mcp.log | jq .
 - [ ] Multi-region deployment
 - [ ] GraphQL endpoint
 
----
 
-## 🔒 Security Considerations
+## Security Considerations
 
 1. **Never commit .env** - Use `.env.example` only
 2. **Rotate API Keys** - Regularly update secrets
@@ -646,9 +636,7 @@ tail -f logs/mcp.log | jq .
 9. **Dependencies** - Regularly update packages
 10. **Docker** - Run as non-root user
 
----
-
-## 🤝 Contributing
+## Contributing
 
 1. Fork repository
 2. Create feature branch: `git checkout -b feature/my-feature`
@@ -656,15 +644,13 @@ tail -f logs/mcp.log | jq .
 4. Run tests: `./scripts/run-tests.sh`
 5. Submit pull request
 
----
 
-## 📖 API Documentation
+## API Documentation
 
 Complete API documentation available at `/docs` (Swagger UI) or `/redoc` (ReDoc).
 
----
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Port Already in Use
 ```bash
@@ -693,24 +679,13 @@ python -c "from app.config.settings import get_settings; print(get_settings().op
 
 ---
 
-## 📝 License
+## License
 
 MIT License - See LICENSE file
 
----
 
-## 👨‍💻 Author
+## Author
 
 Created as a production-ready MCP server template for AI integration.
 
----
-
-## 🙏 Support
-
-For issues and questions:
-- GitHub Issues: [Create Issue](https://github.com/yourusername/python-mcp-server/issues)
-- Documentation: [Wiki](https://github.com/yourusername/python-mcp-server/wiki)
-
----
-
-**Happy Building! 🚀**
+Heartly welcome for Contributers....
