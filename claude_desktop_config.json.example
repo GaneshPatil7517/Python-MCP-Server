@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "python-mcp-server": {
+      "command": "python",
+      "args": ["/path/to/python-mcp-server/app/main.py"],
+      "env": {
+        "OPENAI_API_KEY": "sk-your-openai-key",
+        "WEATHER_API_KEY": "your-weather-api-key",
+        "GITHUB_TOKEN": "ghp_your-github-token",
+        "API_KEY": "your-api-key",
+        "BEARER_TOKEN": "your-bearer-token",
+        "DEBUG": "False",
+        "ENVIRONMENT": "production"
+      }
+    }
+  }
+}
