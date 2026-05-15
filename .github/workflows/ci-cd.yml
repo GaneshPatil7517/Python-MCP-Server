@@ -51,7 +51,8 @@ jobs:
   docker:
     needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Run on push to main (build validation) and on pull requests (PR validation)
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request'
     
     steps:
     - uses: actions/checkout@v4
